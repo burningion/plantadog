@@ -17,18 +17,25 @@ while True:
     if from_teensy:
         print(from_teensy)
     time.sleep(1)
-    # to write to teensy...
-    # will do for an event posted to DD
+
+    # get number of hosts running
     total_hosts = api.Hosts.totals()
     print(total_hosts['total_up'])
     teensy.write(bytes('@T' + str(total_hosts['total_up']), 'ascii'))
 
+    # get if any events have occurred in past 10 mins
     end_time = time.time()
-    start_time = end_time - 5
+    start_time = end_time - (60 * 10)
     events = api.Event.query(start=start_time,
                              end=end_time)
+    teensy.write(bytes('@E' + str(len(events['events'])), 'ascii'))
 
-    if len(events['events']) > 0:
-        teensy.write(bytes('@E' + str(len(events['events'])), 'ascii'))
-    time.sleep(4)
+    # see if our monitor triggered
+    mon = api.Monitor.get(10780655, group_states='alert')
+    print(mon['overall_state'])
+    if mon['overall_state'] == 'OK':
+        teensy.write(bytes('@M1', 'ascii'))
+    else:
+        teensy.write(bytes('@M0', 'ascii'))
+    time.sleep(5)
     print("Looping... ")
