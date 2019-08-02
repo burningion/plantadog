@@ -16,8 +16,11 @@ while True:
     from_teensy = teensy.read_all()
     if from_teensy:
         print(from_teensy)
-    time.sleep(100)
+    time.sleep(1)
     # to write to teensy...
     # will do for an event posted to DD
-    # teensy.write(bytes("test", ascii))
-
+    total_hosts = api.Hosts.totals()
+    print(total_hosts['total_up'])
+    teensy.write(bytes('@T' + str(total_hosts['total_up']), 'ascii'))
+    time.sleep(1)
+    print("Looping... ")

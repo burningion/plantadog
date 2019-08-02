@@ -53,6 +53,7 @@ void loop()
      }
      Serial.print("Received: ");
      Serial.println(readString);
+     readString = "";
     }
 
     
