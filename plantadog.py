@@ -22,5 +22,13 @@ while True:
     total_hosts = api.Hosts.totals()
     print(total_hosts['total_up'])
     teensy.write(bytes('@T' + str(total_hosts['total_up']), 'ascii'))
-    time.sleep(1)
+
+    end_time = time.time()
+    start_time = end_time - 5
+    events = api.Event.query(start=start_time,
+                             end=end_time)
+
+    if len(events['events']) > 0:
+        teensy.write(bytes('@E' + str(len(events['events'])), 'ascii'))
+    time.sleep(4)
     print("Looping... ")
