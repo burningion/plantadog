@@ -53,6 +53,22 @@ void loop()
      }
      Serial.print("Received: ");
      Serial.println(readString);
+     String part01 = getValue(readString,'@',1); // (T)otal number of hosts
+     String part02 = getValue(readString,'@',2); // number of (E)vents
+     String part03 = getValue(readString,'@',3); // status of (M)onitor
+     
+     for(int i=0; i<part01.remove(0,1).toInt(); i++) {
+        strip1.setPixelColor(i, strip1.Color(  0, 255,   0)); // Green
+        strip1.show();          
+     }
+     if (part02.remove(0,1).toInt() > 0) {
+        theaterChaseRainbow(50);
+     }
+
+     if (part03.remove(0,1).toInt() > 0) {
+       colorWipe3(strip3.Color(  0, 255,   0), 50); // Green
+       colorWipe3(strip3.Color(  255, 0,   0), 50); // Green
+     }
      readString = "";
     }
 
@@ -70,7 +86,8 @@ void loop()
     Serial.print(total2);                  // print sensor output 2
     Serial.print("\t");
     Serial.println(total3);                // print sensor output 3
-    
+
+    /*
     colorWipe(strip1.Color(255,   0,   0), 50); // Red
     //theaterChaseRainbow(40); // Rainbow-enhanced theaterChase variant
     colorWipe(strip1.Color( 255, 255,   0), 50); // Green
@@ -86,6 +103,24 @@ void loop()
     colorWipe(strip1.Color(  0, 0,   0), 50); // Green
     colorWipe2(strip2.Color(  0, 0,   0), 50); // Green
     colorWipe3(strip3.Color(  0, 0,   0), 50); // Green
+    */
+}
+
+String getValue(String data, char separator, int index)
+{
+  int found = 0;
+  int strIndex[] = {0, -1};
+  int maxIndex = data.length()-1;
+
+  for(int i=0; i<=maxIndex && found<=index; i++){
+    if(data.charAt(i)==separator || i==maxIndex){
+        found++;
+        strIndex[0] = strIndex[1]+1;
+        strIndex[1] = (i == maxIndex) ? i+1 : i;
+    }
+  }
+
+  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
 

@@ -15,7 +15,7 @@ while True:
     # first, see if the teensy has said anything
     from_teensy = teensy.read_all()
     if from_teensy:
-        print(from_teensy)
+        print(f"READ BACK FROM TEENSY: {from_teensy}")
     time.sleep(1)
 
     # get number of hosts running
